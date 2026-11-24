@@ -2,7 +2,7 @@
 id: index
 slug: /
 title: Module 1 – Architecture WLC/LAP et jonction CAPWAP
-sidebar_label: Présentation du module
+sidebar_label: "Accueil – Module 1"
 ---
 
 # Module 1 – Architecture WLC/LAP et jonction CAPWAP

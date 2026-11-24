@@ -9,7 +9,7 @@ const GITHUB_REPO = '3C5-WiFi1';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Réseau 2 – Réseaux sans fil avec WLC',
-  tagline: 'Module 1 – Architecture WLC/LAP et jonction CAPWAP',
+  tagline: 'Notes de cours – réseaux sans fil centralisés',
   favicon: 'img/favicon.ico',
   future: {v4: true},
 
@@ -51,7 +51,8 @@ const config = {
       navbar: {
         title: 'Réseau 2 – Sans fil et WLC',
         items: [
-          {type: 'docSidebar', sidebarId: 'modules', position: 'left', label: 'Module 1'},
+          {type: 'doc', docId: 'index', position: 'left', label: 'Module 1'},
+          {type: 'doc', docId: 'm2-index', position: 'left', label: 'Module 2'},
         ],
       },
       footer: {
