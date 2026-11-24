@@ -100,12 +100,12 @@ interface GigabitEthernet1/0/10
 
 </details>
 
-**Exercice 5 – Diagnostic.** Un LAP est branché ; il a une IP et sa passerelle répond. La console montre qu'il cherche le WLC en boucle, sans réponse. L'option 43 est correcte. Quelles vérifications faites-vous ensuite ?
+**Exercice 5 – Diagnostic.** Un LAP est branché ; il a une IP et sa passerelle répond. Une capture réseau montre qu'il envoie des demandes de découverte en boucle, sans réponse. L'option 43 est correcte. Quelles vérifications faites-vous ensuite ?
 
 <details>
 <summary>Voir le corrigé</summary>
 
-Le problème se situe entre la connaissance de l'adresse du WLC et la réponse. Vérifier : l'**accessibilité** du WLC depuis le réseau du LAP (routage, `ping`), le filtrage de **UDP 5246** (ACL, pare-feu) dans les deux sens, l'état du WLC (WMI active, interface de gestion correcte). Ensuite, regarder `show wireless stats ap discovery` sur le WLC pour savoir s'il reçoit les demandes.
+Le problème se situe entre la connaissance de l'adresse du WLC et la réponse. Vérifier : l'**accessibilité** du WLC depuis le réseau du LAP (routage, `ping`), le filtrage de **UDP 5246** (ACL, pare-feu) dans les deux sens, l'état du WLC (WMI active, interface de gestion correcte). Ensuite, regarder les statistiques de découverte dans l'interface web du WLC (*Monitoring > Wireless > AP Statistics*) pour savoir s'il reçoit les demandes.
 
 </details>
 
@@ -126,7 +126,7 @@ Pour vous exercer seul, vous pouvez en tout cas :
 
 1. **Dessiner** la topologie du module et la compléter avec vos propres adresses ;
 2. **Calculer** l'option 43 correspondant à votre WLC ;
-3. **Prédire** ce que vous devriez voir sur la console du LAP à chaque étape ;
+3. **Prédire** ce que vous devriez voir dans la capture réseau à chaque étape ;
 4. **Capturer** le trafic CAPWAP (filtre `udp.port == 5246`) et repérer la découverte, puis les paquets chiffrés ;
 5. **Provoquer** volontairement une panne (mauvais VLAN, mauvaise option 43) et retrouver la cause avec la méthode du chapitre 8.
 

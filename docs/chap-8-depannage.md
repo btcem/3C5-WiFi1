@@ -35,36 +35,35 @@ flowchart TB
 |---|---|---|---|
 | 1 | Le LAP n'a **pas d'adresse IP** | Mauvais VLAN sur le port, DHCP absent ou épuisé, relais DHCP manquant | Commutateur d'accès (`show interfaces status`, VLAN du port), DHCP (`show ip dhcp binding`) |
 | 2 | Le LAP a une IP mais **ne joint pas** | La passerelle ne répond pas à l'ARP | `show standby brief` sur la distribution, accessibilité de la passerelle |
-| 3 | Le LAP **ne sait pas où chercher** | Option 43 absente ou mal calculée, pas d'enregistrement DNS | Console du LAP (adresse du WLC annoncée), configuration DHCP |
+| 3 | Le LAP **ne sait pas où chercher** | Option 43 absente ou mal calculée, pas d'enregistrement DNS | Configuration DHCP sur la distribution (option 43), capture réseau |
 | 4 | Le LAP envoie des découvertes **sans réponse** | UDP 5246 filtré, mauvais routage, WLC injoignable | `ping` du WLC depuis la distribution, ACL, pare-feu |
-| 5 | La découverte réussit mais le LAP **recommence en boucle** | Échec DTLS : certificat invalide ou heure erronée | `show wireless management trustpoint`, heure du WLC |
+| 5 | La découverte réussit mais le LAP **recommence en boucle** | Échec DTLS : certificat invalide ou heure erronée | Point de confiance (Configuration > Interface > Wireless), heure du WLC (Configuration > Administration > Time) |
 | 6 | Le LAP se joint à un **mauvais WLC** | Ancienne configuration statique mémorisée dans le LAP | Remise à zéro du LAP, WLC primaire enregistré |
-| 7 | Le LAP **redémarre** à chaque jonction | Mise à jour logicielle en cours, ou version qui ne se stabilise pas | Console du LAP, comparaison des versions |
-| 8 | Le Join est **refusé** | Contrainte du WLC (capacité maximale, domaine réglementaire du LAP incompatible avec le pays configuré, etc.) | Journaux du WLC, `show wireless stats ap join summary` |
+| 7 | Le LAP **redémarre** à chaque jonction | Mise à jour logicielle en cours, ou version qui ne se stabilise pas | Versions du LAP et du WLC dans l'interface web, capture réseau |
+| 8 | Le Join est **refusé** | Contrainte du WLC (capacité maximale, domaine réglementaire du LAP incompatible avec le pays configuré, etc.) | Journaux du WLC, statistiques de jonction (Monitoring > Wireless > AP Statistics) |
 
 :::warning[Le domaine réglementaire]
-Un LAP est vendu pour une région (domaine réglementaire). Le WLC est configuré avec un **pays** (dans le laboratoire : `wireless country CA`). Un LAP dont le domaine réglementaire n'est pas compatible avec le pays configuré peut être refusé. Vérifiez la référence du LAP.
+Un LAP est vendu pour une région (domaine réglementaire). Le WLC est configuré avec un **pays** (le Canada, dans le laboratoire). Un LAP dont le domaine réglementaire n'est pas compatible avec le pays configuré peut être refusé. Vérifiez la référence du LAP.
 :::
 
 ## 8.3 Les commandes à connaître
 
-### Sur le WLC
+### Dans l'interface web du WLC
 
-| Commande | Ce qu'elle montre |
+| Où | Ce qu'on y voit |
 |---|---|
-| `show ap summary` | Les LAP joints, leur nom, leur modèle |
-| `show ap uptime` | Temps de fonctionnement du LAP et temps depuis la jonction |
-| `show wireless stats ap discovery` | Statistiques des découvertes reçues |
-| `show wireless stats ap join summary` | Résumé des jonctions : **phase** et **cause** de la dernière rupture |
-| `show wireless stats ap mac <mac-radio> join detailed` | Détail pour un LAP donné : compteurs par phase (découverte, DTLS, join, configuration, données), dernier redémarrage, dernière déconnexion |
-| `show wireless stats ap mac <mac-radio> discovery detailed` | Détail des découvertes pour un LAP |
-| `show wireless dtls connections` | État des sessions DTLS (contrôle et données) |
-| `show wireless management trustpoint` | Type de certificat utilisé par le WLC |
-| `show wireless certification config` | Version de DTLS et suites de chiffrement |
-| `show wireless stats ap history` | Historique des événements des LAP |
+| Monitoring > Wireless > AP Statistics | Les LAP joints, leur nom, leur modèle |
+| Détail d'un LAP (Configuration > Wireless > Access Points) | Temps de fonctionnement du LAP et temps depuis la jonction |
+| AP Statistics, statistiques de jonction (*Join Statistics*) | **Phase** et **cause** de la dernière rupture, compteurs par phase (découverte, DTLS, join, configuration, données), dernier redémarrage |
+| AP Statistics, statistiques de découverte | Découvertes reçues par le WLC |
+| Configuration > Interface > Wireless | Point de confiance (certificat) du WLC |
+| Configuration > Administration > Time | Heure du WLC |
+| Troubleshooting > Logs | Journaux et événements des LAP |
+
+Les libellés exacts varient selon la version du WLC.
 
 :::tip[Un bon réflexe]
-Commencez par `show wireless stats ap join summary` : il indique en **quelle phase** la jonction échoue (découverte, DTLS, join, configuration, données DTLS), ce qui vous dit d'emblée où chercher.
+Commencez par les **statistiques de jonction** : elles indiquent en **quelle phase** la jonction échoue (découverte, DTLS, join, configuration, données DTLS), ce qui vous dit d'emblée où chercher.
 :::
 
 ### Sur le commutateur et la distribution
@@ -77,22 +76,9 @@ Commencez par `show wireless stats ap join summary` : il indique en **quelle pha
 | `show ip dhcp binding` | Adresses attribuées aux LAP |
 | `show ip route` | Route vers le réseau du WLC |
 
-### Sur le LAP (console ou SSH)
+### Observer le LAP sans commande
 
-Pour les LAP de génération récente, on peut activer des traces sur le LAP :
-
-```text
-debug capwap client events
-debug capwap client error
-debug dtls client error
-debug dtls client event
-```
-
-Si vous êtes connecté par SSH, activez aussi `terminal monitor` : sans lui, les messages ne s'affichent pas.
-
-:::warning[Les traces de débogage]
-Elles sont verbeuses et se destinent à un diagnostic ciblé. Activez-les pour un LAP précis, pendant un test court, puis désactivez-les.
-:::
+On ne configure ni ne déboggue le LAP en ligne de commande. Une **capture réseau** (Wireshark sur le port du LAP, ou *Troubleshooting > Packet Capture* du WLC) montre ce que le LAP envoie et reçoit : demandes de découverte, DTLS, trafic CAPWAP.
 
 ## 8.4 Scénarios guidés
 
@@ -122,7 +108,7 @@ Le LAP vérifie sa passerelle par ARP. Sans réponse, il ne peut pas poursuivre.
 
 ### Scénario C – Le LAP cherche sans trouver
 
-Le LAP est dans le VLAN 50 et son WLC dans le VLAN 99. La console du LAP affiche des demandes de découverte répétées, sans réponse. Dans le DHCP, vous avez écrit l'option 43 `f1040a0063a0`.
+Le LAP est dans le VLAN 50 et son WLC dans le VLAN 99. Une capture réseau montre des demandes de découverte répétées, sans réponse. Dans le DHCP, vous avez écrit l'option 43 `f1040a0063a0`.
 
 <details>
 <summary>Voir le corrigé</summary>
@@ -138,7 +124,7 @@ La découverte réussit : le LAP voit le WLC. Mais il recommence sans cesse, san
 <details>
 <summary>Voir le corrigé</summary>
 
-L'échec se situe à l'étape **DTLS Setup** : les certificats sont vérifiés, notamment leur **période de validité**. Avec une horloge du WLC très erronée, le certificat paraît invalide. Il faut **régler l'heure** du WLC (idéalement par NTP), puis regénérer ou vérifier le certificat (`show wireless management trustpoint`).
+L'échec se situe à l'étape **DTLS Setup** : les certificats sont vérifiés, notamment leur **période de validité**. Avec une horloge du WLC très erronée, le certificat paraît invalide. Il faut **régler l'heure** du WLC (idéalement par NTP), puis vérifier le certificat (*Configuration > Interface > Wireless*).
 
 </details>
 
@@ -157,17 +143,17 @@ Une **configuration statique** (WLC primaire) est restée mémorisée dans le LA
 
 - Identifiez **la dernière étape réussie** : la panne est à l'étape suivante.
 - Ordre de vérification : alimentation, **IP et passerelle**, **adresse du WLC**, **UDP 5246**, **DTLS**, **Join**, **image et configuration**.
-- `show wireless stats ap join summary` indique **en quelle phase** la jonction échoue.
+- Les **statistiques de jonction** du WLC indiquent **en quelle phase** la jonction échoue.
 - Les causes les plus fréquentes : **VLAN/DHCP**, **passerelle**, **option 43**, **filtrage UDP**, **certificat/heure**, **configuration statique résiduelle**.
 
 ## Vérifiez votre compréhension
 
-**Question 1.** Quelle commande indique la phase où la jonction échoue ?
+**Question 1.** Où voit-on la phase où la jonction échoue ?
 
 <details>
 <summary>Voir le corrigé</summary>
 
-`show wireless stats ap join summary` (et, pour un LAP précis, `show wireless stats ap mac <mac-radio> join detailed`).
+Dans les statistiques de jonction du WLC (*Monitoring > Wireless > AP Statistics*), globalement ou pour un LAP précis.
 
 </details>
 

@@ -70,7 +70,7 @@ Dans l'architecture centralisée, le **WLC pense** et le **LAP émet**. Le LAP n
 :::
 
 :::note[Un partage qui peut varier]
-Quelles fonctions sont exécutées par le WLC ou par le LAP peut se configurer (commutation, authentification, DHCP, association). C'est le sujet du module sur la commutation centrale et locale. Pour l'instant, retenez seulement le principe de la séparation.
+Quelles fonctions sont exécutées par le WLC ou par le LAP peut se configurer (commutation, authentification, DHCP, association). C'est le sujet du module 2 (commutation locale ; la commutation centrale viendra dans un cours ultérieur). Pour l'instant, retenez seulement le principe de la séparation.
 :::
 
 ## 1.3 Autonome ou centralisé : comparaison

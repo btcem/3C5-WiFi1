@@ -6,42 +6,34 @@ sidebar_label: "7. Observer et vérifier"
 
 # Chapitre 7 – Observer et vérifier
 
-**Objectif :** vérifier la configuration d'un LAP et d'un client avec des commandes, et reconnaître chaque mode sur une capture réseau.
+**Objectif :** vérifier la configuration d'un LAP et d'un client dans l'interface web du WLC et sur les commutateurs, et reconnaître chaque mode sur une capture réseau.
 
 ## 7.1 Vérifier le modèle de configuration
 
-Ces commandes se tapent sur le WLC. Elles confirment **ce que le LAP porte** et **ce que contiennent** les profils.
+Dans l'interface web du WLC, ces écrans confirment **ce que le LAP porte** et **ce que contiennent** les profils.
 
-| Commande | Ce qu'elle montre |
+| Où | Ce qu'on y voit |
 |---|---|
-| `show wlan summary` | Les profils WLAN (SSID, état) |
-| `show wireless profile policy summary` | Les profils Policy |
-| `show wireless profile flex summary` | Les profils Flex |
-| `show wireless tag policy summary` | Les Policy tags |
-| `show wireless tag site summary` | Les Site tags |
-| `show ap tag summary` | **Les tags portés par chaque LAP** |
-| `show ap name NOM config general` | Détails d'un LAP : tags, mode, etc. |
+| *Configuration > Tags & Profiles > WLANs* | Les profils WLAN (SSID, état) |
+| *Configuration > Tags & Profiles > Policy* | Les profils Policy |
+| *Configuration > Tags & Profiles > Flex* | Les profils Flex |
+| *Configuration > Tags & Profiles > Tags* | Les Policy tags, Site tags et RF tags |
+| *Configuration > Wireless > Access Points*, colonnes ou onglet Tags du LAP | **Les tags portés par chaque LAP** |
+| Détail du LAP (onglet General) | Le **mode** du LAP, son adresse IP, son temps de fonctionnement |
 
-:::tip[Commencez toujours par `show ap tag summary`]
-Quand un SSID n'apparaît pas ou ne se comporte pas comme prévu, la première question est : *« Quels tags ce LAP porte-t-il ? »* Cette commande y répond en une ligne par LAP.
+:::tip[Commencez toujours par les tags du LAP]
+Quand un SSID n'apparaît pas ou ne se comporte pas comme prévu, la première question est : *« Quels tags ce LAP porte-t-il ? »* La liste des LAP y répond en une ligne par LAP.
 :::
 
 ## 7.2 Vérifier le mode du LAP
 
-Le **mode** du LAP (local ou FlexConnect) se lit dans le résultat de `show ap name NOM config general` (cherchez le mode du LAP) et dans le **Site tag** qu'il porte (le **site local** est-il activé ?).
+Le **mode** du LAP (local ou FlexConnect) se lit dans le détail du LAP (onglet General) et dans le **Site tag** qu'il porte (le **site local** est-il activé ?).
 
 Rappelez-vous : un LAP en mode local ignore la commutation locale d'un profil Policy (chapitre 4).
 
 ## 7.3 Vérifier un client
 
-Une fois un client associé :
-
-```text
-show wireless client summary
-show wireless client mac-address AAAA.BBBB.CCCC detail
-```
-
-Le détail d'un client indique notamment :
+Une fois un client associé, ouvrez *Monitoring > Wireless > Clients* et cliquez sur le client. Le détail indique notamment :
 
 - le **SSID** et le **profil Policy** appliqué ;
 - le **VLAN** dans lequel le client a été placé ;
@@ -59,7 +51,7 @@ Les commandes de commutation que vous connaissez déjà confirment la chaîne de
 | Commande | Où | Ce qu'elle vérifie |
 |---|---|---|
 | `show interfaces trunk` | AS1, DS1 | VLAN **autorisés** et VLAN natif sur chaque trunk |
-| `show vlan brief` | AS1, DS1, WLC | Le VLAN **existe** |
+| `show vlan brief` | AS1, DS1 | Le VLAN **existe** |
 | `show spanning-tree vlan 110` | AS1, DS1 | Le VLAN est bien **transmis** (pas bloqué par STP) |
 | `show ip dhcp binding` | DS1 | Le client a obtenu un bail |
 | `show standby brief` | DS1, DS2 | État HSRP du VLAN |
@@ -101,19 +93,19 @@ La première trame **manquante** désigne le maillon défaillant.
 
 ## À retenir
 
-- `show ap tag summary` : première commande à taper quand un SSID ne se comporte pas comme prévu.
+- Les **tags du LAP** : première chose à regarder quand un SSID ne se comporte pas comme prévu.
 - Le détail d'un client donne son **VLAN**, son **profil Policy** et son **mode de commutation**.
 - `show interfaces trunk` et `show vlan brief` confirment la **chaîne de VLAN** côté commutateurs.
 - Sur une capture au port du LAP : **UDP 5247** = commutation centrale ; **802.1Q du client** = commutation locale.
 
 ## Vérifiez votre compréhension
 
-**Question 1.** Quelle commande indique les tags portés par chaque LAP ?
+**Question 1.** Où voit-on les tags portés par chaque LAP dans l'interface web ?
 
 <details>
 <summary>Voir le corrigé</summary>
 
-`show ap tag summary`.
+Dans *Configuration > Wireless > Access Points* (tags du LAP).
 
 </details>
 

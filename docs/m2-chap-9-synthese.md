@@ -34,7 +34,7 @@ Avec le WLC virtuel, on peut **capturer** les deux modes (chapitre 7), **tracer*
 | | Central | Local (FlexConnect) |
 |---|---|---|
 | Site tag | Site local **activé** (ou défaut) | Site local **désactivé** + profil Flex |
-| Profil Policy | `central switching` | pas de `central switching` |
+| Profil Policy | Central Switching coché | Central Switching décoché |
 | Port du LAP | Accès VLAN 50 | Trunk natif 50 + VLAN clients |
 | VLAN client sur accès | Non | Oui |
 | VLAN client sur trunk WLC | Oui | Non |
@@ -75,31 +75,19 @@ Le SSID « Invites » (VLAN 120) devient central. Listez les changements par rap
 - **Lien AS1 ↔ DS** : le VLAN 120 n'y est plus nécessaire.
 - **Trunk DS ↔ WLC** : **ajouter le VLAN 120**.
 - **WLC** : le VLAN 120 doit **exister**.
-- **Profil Policy** : `central switching` ; **profil Flex** : le VLAN 120 n'y est plus requis.
+- **Profil Policy** : Central Switching coché ; **profil Flex** : le VLAN 120 n'y est plus requis.
 - **DS1 / DS2** : inchangé (SVI 120, HSRP, DHCP).
 
 </details>
 
 ### Exercice 3 – Lire une configuration
 
-Un LAP porte le Site tag suivant. Dites dans quel mode il fonctionne et ce qu'il faut sur son port.
-
-```text
-wireless tag site SITE-B
- ap-profile AJP-B
- flex-profile FLEX-B
- no local-site
-!
-wireless profile flex FLEX-B
- native-vlan-id 50
- vlan-name VLAN130
-  vlan-id 130
-```
+Un LAP porte le Site tag **SITE-B** : profil AP Join AJP-B, profil Flex **FLEX-B**, et la case *Enable Local Site* est **décochée**. Le profil FLEX-B a pour VLAN natif **50** et déclare un seul VLAN, le **130**. Dites dans quel mode le LAP fonctionne et ce qu'il faut sur son port.
 
 <details>
 <summary>Voir le corrigé</summary>
 
-Le LAP est en mode **FlexConnect** (`no local-site`, profil Flex). Son port sur l'accès doit être un **trunk** avec le **VLAN natif 50** et le **VLAN 130 autorisé** (en plus du 50). Le VLAN 130 doit aussi être autorisé sur le lien montant et exister sur la distribution.
+Le LAP est en mode **FlexConnect** (site local désactivé, profil Flex). Son port sur l'accès doit être un **trunk** avec le **VLAN natif 50** et le **VLAN 130 autorisé** (en plus du 50). Le VLAN 130 doit aussi être autorisé sur le lien montant et exister sur la distribution.
 
 </details>
 

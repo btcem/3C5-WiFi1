@@ -34,7 +34,7 @@ flowchart LR
 
 **Démarche.**
 
-1. L'étape 3 échoue : pas d'IP. Le client est-il bien dans le bon VLAN ? `show wireless client mac-address ... detail` : le VLAN est 110.
+1. L'étape 3 échoue : pas d'IP. Le client est-il bien dans le bon VLAN ? Détail du client dans *Monitoring > Wireless > Clients* : le VLAN est 110.
 2. Où est-ce que la trame disparaît ? En central, elle passe par le trunk du WLC.
 3. `show interfaces trunk` sur DS1 : le trunk vers le WLC n'autorise que le VLAN 99.
 
@@ -84,7 +84,7 @@ flowchart LR
 
 **Cause :** le LAP est en **mode local** : le **site local est activé** dans son Site tag, ou le LAP porte le **Site tag par défaut**. Le profil Policy « local » est ignoré.
 
-**Correction :** attribuer au LAP un **Site tag** avec **site local désactivé** et un **profil Flex**. Vérifier avec `show ap tag summary`.
+**Correction :** attribuer au LAP un **Site tag** avec **site local désactivé** et un **profil Flex**. Vérifier les tags du LAP dans *Configuration > Wireless > Access Points*.
 
 </details>
 
@@ -97,7 +97,7 @@ flowchart LR
 
 **Cause :** le LAP porte les **tags par défaut** (aucune attribution). Aucun Policy tag ne relie le profil WLAN « Employes » à un profil Policy pour ce LAP.
 
-**Correction :** créer un Policy tag qui associe le profil WLAN à un profil Policy, et l'**attribuer** au LAP (`show ap tag summary` pour vérifier).
+**Correction :** créer un Policy tag qui associe le profil WLAN à un profil Policy, et l'**attribuer** au LAP (vérifiez les tags du LAP dans l'interface web).
 
 </details>
 
@@ -121,12 +121,12 @@ flowchart LR
 
 ## Vérifiez votre compréhension
 
-**Question 1.** En central, le client n'a pas d'adresse IP. Quel équipement vérifiez-vous en premier, et quelle commande ?
+**Question 1.** En central, le client n'a pas d'adresse IP. Quel équipement vérifiez-vous en premier, et avec quelle commande ?
 
 <details>
 <summary>Voir le corrigé</summary>
 
-Le **trunk** entre DS1 et le WLC : `show interfaces trunk`, pour confirmer que le VLAN du client (110) y est autorisé. Vérifiez aussi que le VLAN existe sur le WLC.
+Le **trunk** entre DS1 et le WLC : `show interfaces trunk`, pour confirmer que le VLAN du client (110) y est autorisé. Vérifiez aussi que le VLAN existe sur le WLC (*Configuration > Layer2 > VLAN*).
 
 </details>
 

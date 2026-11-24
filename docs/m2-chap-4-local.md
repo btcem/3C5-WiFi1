@@ -51,16 +51,7 @@ Le **profil Flex** décrit ce dont un LAP a besoin pour commuter **seul** :
 | Authentification locale | Serveur RADIUS de secours, comptes locaux (module suivant) |
 | ACL, etc. | Contrôles propres à la commutation locale |
 
-Exemple indicatif :
-
-```text
-wireless profile flex FLEX-SITE
- native-vlan-id 50
- vlan-name VLAN110
-  vlan-id 110
- vlan-name VLAN120
-  vlan-id 120
-```
+Exemple dans l'interface web (*Configuration > Tags & Profiles > Flex*, profil **FLEX-SITE**) : onglet General, **Native VLAN ID = 50** ; onglet VLAN, deux entrées : nom VLAN110 avec l'ID 110, et nom VLAN120 avec l'ID 120.
 
 :::info[À retenir]
 Le **VLAN natif** du profil Flex doit être le même que le **VLAN natif du trunk** configuré sur le commutateur d'accès. S'il diffère, le LAP et le commutateur ne s'entendent pas sur le VLAN non étiqueté, et le LAP perd son accès au réseau ou les VLAN sont mal placés.
@@ -70,24 +61,13 @@ Le **VLAN natif** du profil Flex doit être le même que le **VLAN natif du trun
 
 ### Sur le profil Policy
 
-```text
-wireless profile policy POL-EMPLOYES-LOCAL
- vlan VLAN110
- no central switching
- no central dhcp
- no shutdown
-```
+Dans *Configuration > Tags & Profiles > Policy*, profil **POL-EMPLOYES-LOCAL** : **Central Switching** et **Central DHCP** décochés, VLAN **110** (onglet Access Policies), profil activé.
 
 Le nom (ou le numéro) du VLAN doit correspondre à un VLAN **déclaré dans le profil Flex**.
 
 ### Sur le Site tag
 
-```text
-wireless tag site SITE-SUCCURSALE
- ap-profile AJP-SUCCURSALE
- flex-profile FLEX-SITE
- no local-site
-```
+Dans *Configuration > Tags & Profiles > Tags > Site*, tag **SITE-SUCCURSALE** : profil AP Join AJP-SUCCURSALE, case **Enable Local Site décochée**, profil Flex FLEX-SITE.
 
 ### Sur le commutateur d'accès (port du LAP) : un trunk
 

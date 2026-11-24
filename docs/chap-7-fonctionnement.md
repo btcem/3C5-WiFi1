@@ -80,8 +80,8 @@ Une mise à jour de grande ampleur déclenche le redémarrage de nombreux LAP. P
 | Où regarder | Ce qu'on vérifie |
 |---|---|
 | Tableau de bord du WLC | Le nombre de LAP joints correspond au nombre attendu |
-| `show ap summary` | Chaque LAP est présent, avec son nom et son état |
-| `show ap uptime` | Temps de fonctionnement du LAP et temps depuis la jonction |
+| Monitoring > Wireless > AP Statistics | Chaque LAP est présent, avec son nom et son état |
+| Détail du LAP (Configuration > Wireless > Access Points) | Temps de fonctionnement du LAP et temps depuis la jonction (les libellés varient selon la version) |
 
 Interprétation du temps de fonctionnement :
 

@@ -33,7 +33,7 @@ Le mot « tag » désigne ici un **regroupement de profils** sur le WLC. Ce n'es
 | Profil | Ce qu'il décrit | Exemples de paramètres |
 |---|---|---|
 | **WLAN** | Un réseau sans fil | SSID, type de sécurité (WPA2, WPA3, 802.1X), clé |
-| **Policy** | Le **traitement** des clients d'un WLAN | VLAN, commutation centrale ou locale, ACL, QoS, durée de session |
+| **Policy** | Le **traitement** des clients d'un WLAN | VLAN, fonctions centrales ou locales (commutation, authentification, DHCP, association), ACL, QoS, durée de session |
 | **AP Join** | Le comportement du **LAP** vis-à-vis du WLC | Paramètres CAPWAP, WLC de secours, accès SSH, NTP |
 | **Flex** | Ce dont un LAP en commutation locale a besoin pour **travailler seul** | VLAN natif, liste des VLAN locaux, authentification locale |
 | **RF** | La **radio** | Débits permis, plages de canaux et de puissances, RRM |
@@ -41,7 +41,7 @@ Le mot « tag » désigne ici un **regroupement de profils** sur le WLC. Ce n'es
 Remarquez la répartition :
 
 - le profil **WLAN** dit *quel réseau* on diffuse ;
-- le profil **Policy** dit *ce qu'on fait des clients* de ce réseau (c'est là que se décide le VLAN et le mode de commutation) ;
+- le profil **Policy** dit *ce qu'on fait des clients* de ce réseau (c'est là que se décident le VLAN et les fonctions centrales ou locales) ;
 - les profils **AP Join**, **Flex** et **RF** décrivent le **LAP** et sa radio.
 
 ## 1.3 Les trois tags
@@ -86,7 +86,7 @@ C'est le **schéma maître** du module. Quand vous ne savez plus où vous êtes,
 Un 9800 contient des tags **par défaut** : `default-policy-tag`, `default-site-tag` et `default-rf-tag`. Un LAP qui n'a reçu aucune attribution reçoit ces tags. Ils ne peuvent être ni supprimés ni renommés.
 
 :::warning[Piège classique]
-Un LAP qui vient de se joindre porte les tags par défaut. Si votre SSID n'est associé à aucun Policy tag que le LAP porte, le SSID **n'est tout simplement pas diffusé**. Ce n'est pas une panne : le LAP n'a pas reçu l'instruction de le diffuser. Nous y reviendrons au chapitre 8.
+Un LAP qui vient de se joindre porte les tags par défaut. Si votre SSID n'est associé à aucun Policy tag que le LAP porte, le SSID **n'est tout simplement pas diffusé**. Ce n'est pas une panne : le LAP n'a pas reçu l'instruction de le diffuser. Nous y reviendrons au chapitre 10.
 :::
 
 ## 1.5 Comment attribue-t-on des tags à un LAP ?
@@ -99,25 +99,35 @@ Un LAP qui vient de se joindre porte les tags par défaut. Si votre SSID n'est a
 
 Il existe un ordre de priorité entre ces méthodes : l'attribution **statique** l'emporte sur les autres. Retenez surtout la logique : on peut gérer **un LAP à la fois** ou **des groupes** de LAP.
 
-Exemple indicatif de configuration d'un tag et de son attribution :
+Dans l'interface web du WLC, tout se fait par menus :
 
-```text
-wireless tag policy POL-TAG-CAMPUS
- wlan WLAN-EMPLOYES policy POL-EMPLOYES-CENTRAL
-!
-wireless tag site SITE-CAMPUS
- ap-profile AJP-CAMPUS
-!
-ap 0011.2233.4455
- policy-tag POL-TAG-CAMPUS
- site-tag SITE-CAMPUS
-```
+| Quoi | Où |
+|---|---|
+| Créer les profils | *Configuration > Tags & Profiles* (WLANs, Policy, AP Join, Flex, RF) |
+| Créer les tags | *Configuration > Tags & Profiles > Tags* (onglets Policy, Site, RF) |
+| Attribuer les tags à un LAP | *Configuration > Wireless > Access Points* > le LAP > onglet Tags |
 
-:::note[Syntaxe à valider]
-Les mots exacts varient légèrement selon la version d'IOS XE. Ce qu'il faut retenir est la **structure** : un tag contient des profils, un LAP reçoit des tags.
+:::note[Libellés à valider]
+Les noms des menus varient légèrement selon la version d'IOS XE. Ce qu'il faut retenir est la **structure** : un tag contient des profils, un LAP reçoit des tags.
 :::
 
-## 1.6 Lien avec ce que vous connaissez déjà
+## 1.6 Pourquoi cette organisation : l'intérêt de chaque profil et de chaque tag
+
+Chaque profil et chaque tag existe parce qu'il **change à un rythme différent** et pour des raisons différentes. Les séparer évite de tout dupliquer.
+
+| Objet | Ce qui le fait changer | Ce que la séparation évite |
+|---|---|---|
+| **Profil WLAN** | Un nouveau SSID, une nouvelle clé | Redéfinir le SSID pour chaque endroit où on le diffuse |
+| **Profil Policy** | Un VLAN différent, une règle de trafic | Recréer un SSID complet juste pour changer de VLAN |
+| **Policy tag** | La liste des SSID d'un groupe de LAP | Associer les SSID LAP par LAP |
+| **Profil AP Join** | Des règles d'administration des LAP (SSH, comptes) | Répéter ces règles dans chaque site |
+| **Profil Flex** | Les VLAN et le VLAN natif **d'un site** | Mélanger les VLAN de sites différents |
+| **Site tag** | Un nouveau site ou un LAP qui change de site | Reconfigurer les LAP un par un |
+| **Profils RF et RF tag** | La puissance et les canaux d'une zone | Régler chaque radio à la main |
+
+Le chapitre 7 montre cette logique sur trois configurations de sites.
+
+## 1.7 Lien avec ce que vous connaissez déjà
 
 Pensez à un **modèle de port** sur un commutateur : vous définissez une fois la configuration (VLAN, `portfast`, sécurité de port), puis vous l'appliquez à plusieurs ports. Les profils et les tags jouent ce rôle pour les LAP.
 
@@ -126,7 +136,7 @@ Pensez à un **modèle de port** sur un commutateur : vous définissez une fois 
 - Le modèle de configuration du 9800 repose sur des **profils**, regroupés en **tags**, attribués aux **LAP**.
 - **Cinq profils** : WLAN, Policy, AP Join, Flex, RF. **Trois tags** : Policy, Site, RF.
 - Un LAP sans attribution porte les tags **par défaut** : un SSID non associé n'est pas diffusé.
-- Le **VLAN** et le **mode de commutation** se décident dans le profil **Policy** ; ce dont le LAP a besoin pour commuter localement est dans le profil **Flex**.
+- Le **VLAN** et les fonctions centrales ou locales se décident dans le profil **Policy** ; ce dont le LAP a besoin pour commuter localement est dans le profil **Flex**.
 
 ## Vérifiez votre compréhension
 

@@ -51,21 +51,13 @@ Remarquez qu'il y a **deux trajets distincts** à ne pas confondre :
 
 ### Sur le profil Policy
 
-```text
-wireless profile policy POL-EMPLOYES-CENTRAL
- vlan VLAN110
- central switching
- no shutdown
-```
+Dans *Configuration > Tags & Profiles > Policy*, profil **POL-EMPLOYES-CENTRAL** : **Central Switching** coché, VLAN **110** (onglet Access Policies), profil activé.
 
 ### Sur le WLC
 
 Le VLAN 110 doit **exister** sur le WLC, et le lien du WLC vers la distribution doit le **transporter**.
 
-```text
-vlan 110
- name VLAN110
-```
+Dans l'interface web : *Configuration > Layer2 > VLAN*, créez le VLAN 110 avec le nom VLAN110.
 
 Le lien physique du WLC vers la distribution est un **trunk** (souvent un port-channel, voir le chapitre 3 du module 1) qui **autorise** les VLAN de gestion et des clients :
 

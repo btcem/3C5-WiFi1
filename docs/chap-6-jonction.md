@@ -57,13 +57,7 @@ sequenceDiagram
 
 Le LAP applique le chapitre 5 : il envoie des *Discovery Request*, reçoit des *Discovery Response*, puis choisit un WLC selon l'ordre de sélection.
 
-Dans la console d'un LAP, cet état s'affiche, par exemple :
-
-```text
-CAPWAP State: Discovery
-```
-
-La ligne suivante indique souvent la **source** de l'adresse du WLC (configuration statique, DHCP, DNS, diffusion).
+Le LAP annonce chaque état dans sa propre console (par exemple *CAPWAP State: Discovery*), mais vous n'y avez pas accès : vous suivrez ces états dans l'interface web du WLC et par une **capture réseau**.
 
 ## 6.4 État 2 – DTLS Setup
 
@@ -127,9 +121,8 @@ Un LAP à qui on a attribué une configuration de site distant (profil **Flex**)
 
 | Où | Ce qu'on y voit |
 |---|---|
-| **Console du LAP** | Messages `CAPWAP State: ...`, adresses du WLC, erreurs |
 | **Tableau de bord du WLC** | Nombre de LAP joints |
-| **WLC, `show ap summary`** | Liste des LAP joints, noms, modèles |
+| **WLC, Monitoring > Wireless > AP Statistics** | Liste des LAP joints, noms, modèles, statistiques de jonction |
 | **Capture réseau** | Découverte en clair, puis DTLS, puis données chiffrées |
 
 ## À retenir

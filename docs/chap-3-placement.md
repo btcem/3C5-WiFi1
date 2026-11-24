@@ -97,20 +97,12 @@ Selon la plateforme et la version, le WLC peut prendre en charge une agrégation
 
 ### Cas particulier de votre laboratoire (cette année)
 
-Votre WLC est une **machine virtuelle** (9800-CL) qui n'est **pas** reliée en trunk. Elle utilise une seule interface, configurée comme un **port de couche 3** avec une adresse IP, et déclarée comme interface de gestion :
-
-```text
-interface GigabitEthernet1
- no switchport
- ip address 192.168.X.10 255.255.255.0
-!
-wireless management interface GigabitEthernet1
-```
+Votre WLC est une **machine virtuelle** (9800-CL) qui n'est **pas** reliée en trunk. Elle utilise une seule interface, un **port de couche 3** avec une adresse IP (192.168.X.10 dans vos laboratoires), déclarée comme interface de gestion sans fil. Ces réglages se voient dans l'interface web, sous *Configuration > Interface > Wireless*.
 
 Avec un WLC physique relié par un trunk, on créerait plutôt un VLAN (par exemple le 99), une interface `Vlan99` avec l'adresse de gestion, et on la désignerait comme WMI.
 
 :::note[Pourquoi ça compte]
-Le fait que le WLC soit relié en trunk ou non détermine quels scénarios sont possibles en pratique. Les chapitres suivants fonctionnent dans les deux cas.
+Le fait que le WLC soit relié en trunk ou non détermine quels scénarios sont possibles en pratique. C'est pourquoi le module 2 se limite à la commutation **locale**, qui ne demande aucun trunk vers le WLC.
 :::
 
 ## 3.4 Deux réseaux IP différents, une seule session

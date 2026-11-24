@@ -77,13 +77,9 @@ Les messages de **découverte** (*Discovery Request* et *Discovery Response*) ne
 Pour que le LAP et le WLC puissent s'authentifier, chacun présente un certificat à l'autre.
 
 - Le **LAP** possède un certificat installé en usine.
-- Le **WLC** utilise un certificat associé à un **point de confiance** (*trustpoint*). Dans votre laboratoire, une commande génère un certificat **auto-signé** (`wireless config vwlc-ssc ...`).
+- Le **WLC** utilise un certificat associé à un **point de confiance** (*trustpoint*). Dans votre laboratoire, le WLC virtuel utilise un certificat **auto-signé**, généré lors de son installation.
 
-Vous pouvez voir le certificat utilisé par le WLC avec :
-
-```text
-show wireless management trustpoint
-```
+Vous pouvez voir le point de confiance utilisé par le WLC dans l'interface web, sous *Configuration > Interface > Wireless* (les libellés varient selon la version).
 
 ## 4.6 Modes de fonctionnement : où se fait la commutation ?
 
